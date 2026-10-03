@@ -84,6 +84,63 @@ def validate_student_input(student_data, dataset):
             f"Unexpected features provided: {sorted(extra_features)}"
         )
 
+    # Validate categorical values against the training dataset.
+    categorical_columns = dataset.select_dtypes(
+        include=["object"]
+    ).columns
+
+    for column in categorical_columns:
+
+        if column == "G3":
+            continue
+
+        allowed_values = set(
+            dataset[column].dropna().unique()
+        )
+
+        if student_data[column] not in allowed_values:
+            raise ValueError(
+                f"Invalid value for '{column}': "
+                f"{student_data[column]}. "
+                f"Expected one of {sorted(allowed_values)}"
+            )
+
+    # Validate numerical values.
+    numerical_columns = dataset.select_dtypes(
+        exclude=["object"]
+    ).columns
+
+    for column in numerical_columns:
+
+        if column == "G3":
+            continue
+
+        value = student_data[column]
+
+        if isinstance(value, bool) or not isinstance(
+            value,
+            (int, float)
+        ):
+            raise TypeError(
+                f"Invalid data type for '{column}'. "
+                f"Expected a numerical value."
+            )
+
+        if pd.isna(value):
+            raise ValueError(
+                f"Missing numerical value for '{column}'."
+            )
+
+        # Validate against observed dataset ranges.
+        min_value = dataset[column].min()
+        max_value = dataset[column].max()
+
+        if value < min_value or value > max_value:
+            raise ValueError(
+                f"Value for '{column}' is outside the "
+                f"training data range [{min_value}, {max_value}]."
+            )
+
     return required_features
 
 
@@ -107,7 +164,7 @@ def predict_student(student_data, model, dataset):
 
     predicted_g3 = float(prediction[0])
 
-    # Validate prediction output
+    # Validate prediction output.
     if not 0 <= predicted_g3 <= 20:
         raise ValueError(
             f"Invalid prediction value: {predicted_g3}"
@@ -125,18 +182,19 @@ def main():
 
     print("=" * 70)
     print("STUDENT PERFORMANCE PREDICTION SYSTEM")
-    print("Day 8 - Prediction Workflow Testing")
+    print("Day 11 - Final Prediction System")
     print("=" * 70)
 
     # -----------------------------------------------------
     # 1. Load model
     # -----------------------------------------------------
-    print("\n1. LOADING TRAINED MODEL")
+    print("\n1. LOADING FINAL TRAINED MODEL")
     print("-" * 50)
 
     model, df = load_prediction_system()
 
     print("Tuned Random Forest model loaded successfully.")
+    print(f"Model type: {type(model).__name__}")
     print(f"Dataset shape: {df.shape}")
 
     # -----------------------------------------------------
@@ -253,8 +311,10 @@ def main():
     # -----------------------------------------------------
     # 3. Test predictions
     # -----------------------------------------------------
-    print("\n2. TESTING MULTIPLE STUDENT INPUTS")
+    print("\n2. TESTING STUDENT SCENARIOS")
     print("-" * 50)
+
+    successful_predictions = 0
 
     for student_name, student_data in student_profiles.items():
 
@@ -268,31 +328,68 @@ def main():
                 df
             )
 
-            print(f"Predicted final grade (G3): {predicted_g3:.2f}")
+            print(
+                f"Predicted final grade (G3): "
+                f"{predicted_g3:.2f}"
+            )
             print(f"Performance level: {performance}")
             print("Prediction status: Successful")
+
+            successful_predictions += 1
 
         except (ValueError, TypeError) as error:
 
             print(f"Prediction failed: {error}")
 
     # -----------------------------------------------------
-    # 4. Final validation
+    # 4. Test invalid input handling
     # -----------------------------------------------------
-    print("\n3. PREDICTION SYSTEM VALIDATION")
+    print("\n3. TESTING INPUT VALIDATION")
     print("-" * 50)
 
-    print("✓ Model loaded successfully")
+    invalid_student = student_profiles[
+        "Average Performance Student"
+    ].copy()
+
+    invalid_student["age"] = 100
+
+    try:
+
+        predict_student(
+            invalid_student,
+            model,
+            df
+        )
+
+        print("✗ Invalid input was not rejected.")
+
+    except (ValueError, TypeError):
+
+        print(
+            "✓ Invalid numerical input correctly rejected."
+        )
+
+    # -----------------------------------------------------
+    # 5. Final validation summary
+    # -----------------------------------------------------
+    print("\n4. FINAL DAY 11 VALIDATION")
+    print("-" * 50)
+
+    print("✓ Final model loaded successfully")
     print("✓ Dataset loaded successfully")
-    print("✓ Multiple student inputs tested")
-    print("✓ Feature validation completed")
-    print("✓ Categorical inputs processed")
-    print("✓ Numerical inputs processed")
-    print("✓ Prediction outputs validated")
-    print("✓ Prediction workflow completed")
+    print("✓ Required features validated")
+    print("✓ Categorical values validated")
+    print("✓ Numerical values validated")
+    print("✓ Prediction output range validated")
+    print(
+        f"✓ Successful student predictions: "
+        f"{successful_predictions}/{len(student_profiles)}"
+    )
+    print("✓ Invalid input handling tested")
+    print("✓ End-to-end prediction workflow completed")
 
     print("\n" + "=" * 70)
-    print("DAY 8 PREDICTION WORKFLOW TEST COMPLETED")
+    print("DAY 11 FINAL PREDICTION SYSTEM TEST COMPLETED")
     print("=" * 70)
 
 
