@@ -1,4 +1,4 @@
-﻿# Student Performance Prediction System
+# Student Performance Prediction System
 
 A machine learning project that predicts a student's final mathematics grade (`G3`) using academic, demographic, social, and behavioral information from the UCI Student Performance dataset.
 
@@ -12,7 +12,6 @@ The implemented workflow is:
 
 The project includes exploratory data analysis, preprocessing, multiple regression models, hyperparameter tuning, model evaluation, final model comparison, and a reusable prediction workflow.
 
----
 
 ## Problem Statement
 
@@ -20,7 +19,6 @@ Student academic performance can be influenced by several academic, demographic,
 
 This project uses historical student information to estimate the final mathematics grade (`G3`) and demonstrates how machine learning regression techniques can be applied to student performance analysis.
 
----
 
 ## Dataset
 
@@ -48,7 +46,6 @@ The dataset contains information related to:
 - Previous failures
 - School-related information
 
----
 
 ## Target Variable
 
@@ -58,7 +55,6 @@ The target variable is:
 
 `G3` represents the student's final mathematics grade on a scale from **0 to 20**.
 
----
 
 ## Important Features
 
@@ -92,7 +88,6 @@ Examples of features used by the model include:
 - `G1`
 - `G2`
 
----
 
 ## Exploratory Data Analysis
 
@@ -117,7 +112,6 @@ The project generates visualizations for:
 - Correlation heatmap
 - Model comparison
 
----
 
 ## Data Preprocessing
 
@@ -143,7 +137,6 @@ The dataset is divided using:
 
 The preprocessing and model stages are combined into scikit-learn pipelines to maintain a consistent transformation and prediction workflow.
 
----
 
 ## Machine Learning Models
 
@@ -192,7 +185,6 @@ Best configuration:
 - `min_samples_leaf=2`
 - `min_samples_split=2`
 
----
 
 ## Evaluation Metrics
 
@@ -239,7 +231,7 @@ On the fixed held-out test split used in this project, the original Random Fores
 
 The tuned Random Forest did not produce a lower test-set RMSE than the original Random Forest. Therefore, the project does not claim that hyperparameter tuning improved the final held-out test performance.
 
----
+
 
 ## Prediction Workflow
 
@@ -271,7 +263,7 @@ Three example profiles were tested:
 
 The validation workflow successfully produced predictions for **3/3 test profiles** and correctly rejected an invalid numerical input.
 
----
+
 
 ## Project Structure
 
@@ -325,73 +317,126 @@ Student-Performance-Prediction/
 |-- .gitignore
 |-- requirements.txt
 `-- README.md
-Technologies Used
-Python
-Pandas
-NumPy
-Matplotlib
-Seaborn
-Scikit-learn
-Joblib
-Jupyter Notebook
-Git
-GitHub
-Installation
+```
+
+## Technologies Used
+
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- Joblib
+- Jupyter Notebook
+- Git
+- GitHub
+
+---
+
+## Installation
 
 Clone the repository and enter the project directory:
 
+```powershell
 git clone https://github.com/IKSHITSINHA77/Student-Performance-Prediction.git
 cd Student-Performance-Prediction
+```
 
 Create and activate a virtual environment:
 
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
 
 Install dependencies:
 
+```powershell
 pip install -r requirements.txt
-Running the Project
-Dataset Inspection
+```
+
+---
+
+## Running the Project
+
+### Dataset Inspection
+
+```powershell
 python .\src\data_inspection.py
-Exploratory Data Analysis
+```
+
+### Exploratory Data Analysis
+
+```powershell
 python .\src\eda_analysis.py
-Preprocessing
+```
+
+### Preprocessing
+
+```powershell
 python .\src\preprocess_data.py
-Linear Regression
+```
+
+### Linear Regression
+
+```powershell
 python .\src\train_linear_regression.py
-Tree Models
+```
+
+### Tree Models
+
+```powershell
 python .\src\train_tree_models.py
-Hyperparameter Tuning
+```
+
+### Hyperparameter Tuning
+
+```powershell
 python .\src\tune_tree_models.py
-Prediction Workflow
+```
+
+### Prediction Workflow
+
+```powershell
 python .\src\predict_student.py
-Final Model Comparison
+```
+
+### Final Model Comparison
+
+```powershell
 python .\src\final_model_comparison.py
-Jupyter Notebook
+```
+
+---
+
+## Jupyter Notebook
 
 The complete project workflow is also documented in:
 
-notebooks/student_performance_prediction.ipynb
+
+`notebooks/student_performance_prediction.ipynb`
 
 The notebook covers:
 
-Dataset loading
-Dataset understanding
-Data cleaning
-Exploratory data analysis
-Feature selection
-Preprocessing
-Train/test split
-Model training
-Model comparison
-Evaluation
-Prediction
-Conclusion
+- Dataset loading
+- Dataset understanding
+- Data cleaning
+- Exploratory data analysis
+- Feature selection
+- Preprocessing
+- Train/test split
+- Model training
+- Model comparison
+- Evaluation
+- Prediction
+- Conclusion
 
 The notebook was validated successfully using nbformat.
 
-Important Modeling Consideration
+---
+
+## Important Modeling Consideration
 
 The dataset contains G1 and G2, which represent earlier-period grades.
 
@@ -401,33 +446,38 @@ Therefore, this system should not be interpreted as predicting a student's final
 
 A future version could evaluate a separate feature set that excludes G1 and G2 for an earlier-stage prediction scenario.
 
-Future Improvements
+---
+
+## Future Improvements
 
 Potential improvements include:
 
-Testing additional regression algorithms.
-Performing broader hyperparameter optimization.
-Comparing models using repeated cross-validation.
-Adding feature importance analysis.
-Building an interactive web interface.
-Adding a REST API for predictions.
-Deploying the prediction system to the cloud.
-Evaluating a prediction scenario that excludes previous-period grades.
-Adding additional datasets for broader validation.
-Project Status
+- Testing additional regression algorithms.
+- Performing broader hyperparameter optimization.
+- Comparing models using repeated cross-validation.
+- Adding feature importance analysis.
+- Building an interactive web interface.
+- Adding a REST API for predictions.
+- Deploying the prediction system to the cloud.
+- Evaluating a prediction scenario that excludes previous-period grades.
+- Adding additional datasets for broader validation.
+
+---
+
+## Project Status
 
 The project includes:
 
-Data analysis
-Data preprocessing
-Exploratory analysis
-Multiple regression models
-Hyperparameter tuning
-Model evaluation
-Prediction validation
-Final model comparison
-Visualizations
-Jupyter notebook documentation
-Repository cleanup and validation
+- Data analysis
+- Data preprocessing
+- Exploratory analysis
+- Multiple regression models
+- Hyperparameter tuning
+- Model evaluation
+- Prediction validation
+- Final model comparison
+- Visualizations
+- Jupyter notebook documentation
+- Repository cleanup and validation
 
-The project was developed as part of an AI/ML internship project and has completed the implementation and validation stages through Day 12.
+The project was developed as part of an AI/ML internship project and has completed the implementation and validation stages through Day 14.
