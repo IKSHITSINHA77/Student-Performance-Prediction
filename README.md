@@ -10,7 +10,7 @@ The implemented workflow is:
 
 **Data -> Cleaning -> Analysis -> Feature Selection -> Preprocessing -> Training -> Testing -> Evaluation -> Prediction**
 
-The project includes exploratory data analysis, preprocessing, multiple regression models, hyperparameter tuning, model evaluation, and a reusable prediction workflow.
+The project includes exploratory data analysis, preprocessing, multiple regression models, hyperparameter tuning, model evaluation, final model comparison, and a reusable prediction workflow.
 
 ---
 
@@ -28,7 +28,7 @@ The project uses the **UCI Student Performance Dataset**, specifically the mathe
 
 `student-mat.csv`
 
-Dataset characteristics:
+### Dataset Characteristics
 
 - **395 student records**
 - **33 columns**
@@ -98,7 +98,7 @@ Examples of features used by the model include:
 
 The project performs exploratory analysis to understand relationships between student characteristics and final grades.
 
-Important observations from the analysis include:
+Important observations include:
 
 - `G2` has a strong positive relationship with `G3`.
 - `G1` also has a strong positive relationship with `G3`.
@@ -121,7 +121,7 @@ The project generates visualizations for:
 
 ## Data Preprocessing
 
-The preprocessing pipeline separates features into:
+The preprocessing pipeline separates features into numerical and categorical features.
 
 ### Numerical Features
 
@@ -141,11 +141,13 @@ The dataset is divided using:
 - **20% testing data**
 - `random_state=42`
 
+The preprocessing and model stages are combined into scikit-learn pipelines to maintain a consistent transformation and prediction workflow.
+
 ---
 
 ## Machine Learning Models
 
-The project evaluates the following regression approaches:
+The project evaluates the following regression approaches.
 
 ### 1. Linear Regression
 
@@ -208,32 +210,34 @@ Mean Squared Error calculates the average squared prediction error.
 
 Root Mean Squared Error is the square root of MSE and represents prediction error on the same scale as the target.
 
-### RÂ² Score
+### R2 Score
 
-RÂ² measures how much of the variation in the target variable is explained by the model.
+R2 measures the proportion of variation in the target variable explained by the model.
 
 ---
 
 ## Model Results
 
-The final test-set comparison is:
+The final held-out test-set comparison is:
 
-| Model | MAE | MSE | RMSE | RÂ² |
+| Model | MAE | MSE | RMSE | R2 |
 |---|---:|---:|---:|---:|
 | Decision Tree | 1.4558 | 7.0146 | 2.6485 | 0.6579 |
 | Random Forest | 1.1646 | 3.8543 | 1.9632 | 0.8120 |
 | Tuned Decision Tree | 1.3450 | 4.7375 | 2.1766 | 0.7690 |
 | Tuned Random Forest | 1.1946 | 4.1370 | 2.0340 | 0.7982 |
 
-The project records these results in:
+The complete results are stored in:
 
 `reports/final_model_results.csv`
 
 ### Model Selection Note
 
-Hyperparameter tuning was performed using cross-validation to provide a more systematic model-selection process.
+Hyperparameter tuning was performed using 5-fold cross-validation to provide a systematic model-selection process.
 
-The tuned Random Forest did **not** produce a lower test-set RMSE than the original Random Forest on the fixed test split. Therefore, the project does not claim that tuning improved the final held-out test performance.
+On the fixed held-out test split used in this project, the original Random Forest produced the lowest RMSE and highest R2 among the four reported models.
+
+The tuned Random Forest did not produce a lower test-set RMSE than the original Random Forest. Therefore, the project does not claim that hyperparameter tuning improved the final held-out test performance.
 
 ---
 
@@ -245,18 +249,27 @@ The project contains a reusable prediction script:
 
 The prediction workflow:
 
-1. Loads the trained model.
-2. Validates the required input features.
-3. Accepts student profile information.
-4. Generates a predicted final grade.
-5. Checks that the prediction falls within the expected 0â€“20 range.
-6. Handles invalid or incomplete input.
+1. Loads the trained prediction pipeline.
+2. Loads the dataset used to define the expected feature structure.
+3. Validates required input features.
+4. Validates categorical values.
+5. Validates numerical values and their observed training-data ranges.
+6. Generates a predicted final grade.
+7. Validates that the prediction is within the expected 0-20 range.
+8. Converts the prediction into a simple performance category.
+9. Handles invalid or incomplete input.
 
-Example prediction profiles were tested during the project, including:
+### Tested Student Scenarios
 
-- High Performance
-- Average Performance
-- Needs Improvement
+Three example profiles were tested:
+
+| Student Profile | Predicted G3 | Performance Level |
+|---|---:|---|
+| High Performance Student | 17.97 | Excellent |
+| Average Performance Student | 10.66 | Satisfactory |
+| Needs Improvement Student | 7.80 | At Risk |
+
+The validation workflow successfully produced predictions for **3/3 test profiles** and correctly rejected an invalid numerical input.
 
 ---
 
@@ -264,54 +277,54 @@ Example prediction profiles were tested during the project, including:
 
 ```text
 Student-Performance-Prediction/
-â”‚
-â”œâ”€â”€ data/
-â”‚   â””â”€â”€ student-mat.csv
-â”‚
-â”œâ”€â”€ models/
-â”‚   â”œâ”€â”€ preprocessor.joblib
-â”‚   â”œâ”€â”€ linear_regression_model.joblib
-â”‚   â”œâ”€â”€ decision_tree_model.joblib
-â”‚   â”œâ”€â”€ random_forest_model.joblib
-â”‚   â”œâ”€â”€ tuned_decision_tree_model.joblib
-â”‚   â””â”€â”€ tuned_random_forest_model.joblib
-â”‚
-â”œâ”€â”€ notebooks/
-â”‚   â””â”€â”€ student_performance_prediction.ipynb
-â”‚
-â”œâ”€â”€ reports/
-â”‚   â”œâ”€â”€ day2_eda_findings.txt
-â”‚   â”œâ”€â”€ day5_model_comparison.csv
-â”‚   â”œâ”€â”€ day6_tuned_model_results.csv
-â”‚   â””â”€â”€ final_model_results.csv
-â”‚
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ data_inspection.py
-â”‚   â”œâ”€â”€ eda_analysis.py
-â”‚   â”œâ”€â”€ preprocess_data.py
-â”‚   â”œâ”€â”€ train_linear_regression.py
-â”‚   â”œâ”€â”€ train_tree_models.py
-â”‚   â”œâ”€â”€ tune_tree_models.py
-â”‚   â”œâ”€â”€ predict_student.py
-â”‚   â””â”€â”€ final_model_comparison.py
-â”‚
-â”œâ”€â”€ visualizations/
-â”‚   â”œâ”€â”€ absences_vs_g3.png
-â”‚   â”œâ”€â”€ correlation_heatmap.png
-â”‚   â”œâ”€â”€ failures_vs_g3.png
-â”‚   â”œâ”€â”€ g1_vs_g3.png
-â”‚   â”œâ”€â”€ g2_vs_g3.png
-â”‚   â”œâ”€â”€ g3_distribution.png
-â”‚   â”œâ”€â”€ studytime_vs_g3.png
-â”‚   â”œâ”€â”€ linear_regression_actual_vs_predicted.png
-â”‚   â”œâ”€â”€ tree_models_comparison.png
-â”‚   â”œâ”€â”€ day6_tuned_model_rmse.png
-â”‚   â”œâ”€â”€ final_model_rmse_comparison.png
-â”‚   â””â”€â”€ final_model_r2_comparison.png
-â”‚
-â”œâ”€â”€ .gitignore
-â”œâ”€â”€ requirements.txt
-â””â”€â”€ README.md
+|
+|-- data/
+|   `-- student-mat.csv
+|
+|-- models/
+|   |-- preprocessor.joblib
+|   |-- linear_regression_model.joblib
+|   |-- decision_tree_model.joblib
+|   |-- random_forest_model.joblib
+|   |-- tuned_decision_tree_model.joblib
+|   `-- tuned_random_forest_model.joblib
+|
+|-- notebooks/
+|   `-- student_performance_prediction.ipynb
+|
+|-- reports/
+|   |-- day2_eda_findings.txt
+|   |-- day5_model_comparison.csv
+|   |-- day6_tuned_model_results.csv
+|   `-- final_model_results.csv
+|
+|-- src/
+|   |-- data_inspection.py
+|   |-- eda_analysis.py
+|   |-- preprocess_data.py
+|   |-- train_linear_regression.py
+|   |-- train_tree_models.py
+|   |-- tune_tree_models.py
+|   |-- predict_student.py
+|   `-- final_model_comparison.py
+|
+|-- visualizations/
+|   |-- absences_vs_g3.png
+|   |-- correlation_heatmap.png
+|   |-- failures_vs_g3.png
+|   |-- g1_vs_g3.png
+|   |-- g2_vs_g3.png
+|   |-- g3_distribution.png
+|   |-- studytime_vs_g3.png
+|   |-- linear_regression_actual_vs_predicted.png
+|   |-- tree_models_comparison.png
+|   |-- day6_tuned_model_rmse.png
+|   |-- final_model_rmse_comparison.png
+|   `-- final_model_r2_comparison.png
+|
+|-- .gitignore
+|-- requirements.txt
+`-- README.md
 Technologies Used
 Python
 Pandas
@@ -375,13 +388,16 @@ Model comparison
 Evaluation
 Prediction
 Conclusion
+
+The notebook was validated successfully using nbformat.
+
 Important Modeling Consideration
 
 The dataset contains G1 and G2, which represent earlier-period grades.
 
 Because these variables are strongly related to the final grade G3, including them makes the project a prediction of final performance using prior academic performance information.
 
-Therefore, this system should not be interpreted as predicting a student's final grade before any previous grades are available.
+Therefore, this system should not be interpreted as predicting a student's final grade before previous grades are available.
 
 A future version could evaluate a separate feature set that excludes G1 and G2 for an earlier-stage prediction scenario.
 
@@ -412,5 +428,6 @@ Prediction validation
 Final model comparison
 Visualizations
 Jupyter notebook documentation
+Repository cleanup and validation
 
-The project is being developed as part of an AI/ML internship project.
+The project was developed as part of an AI/ML internship project and has completed the implementation and validation stages through Day 12.
